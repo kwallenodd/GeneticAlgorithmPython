@@ -9,6 +9,7 @@ import logging
 from pygad import utils
 from pygad import helper
 from pygad import visualize
+from my_constants import REUSE_FITNESS
 
 # Extend all the classes so that they can be referenced by just the `self` object of the `pygad.GA` class.
 class GA(utils.parent_selection.ParentSelection,
@@ -1676,13 +1677,13 @@ class GA(utils.parent_selection.ParentSelection,
                     # Make sure that both the solution and 'self.solutions' are of type 'list' not 'numpy.ndarray'.
                     # if (self.save_solutions) and (len(self.solutions) > 0) and (numpy.any(numpy.all(self.solutions == numpy.array(sol), axis=1)))
                     # if (self.save_solutions) and (len(self.solutions) > 0) and (numpy.any(numpy.all(numpy.equal(self.solutions, numpy.array(sol)), axis=1)))
-                    if (self.save_solutions) and (len(self.solutions) > 0) and (list(sol) in self.solutions):
+                    if REUSE_FITNESS and (self.save_solutions) and (len(self.solutions) > 0) and (list(sol) in self.solutions):
                         solution_idx = self.solutions.index(list(sol))
                         fitness = self.solutions_fitness[solution_idx]
-                    elif (self.save_best_solutions) and (len(self.best_solutions) > 0) and (list(sol) in self.best_solutions):
+                    elif REUSE_FITNESS and (self.save_best_solutions) and (len(self.best_solutions) > 0) and (list(sol) in self.best_solutions):
                         solution_idx = self.best_solutions.index(list(sol))
                         fitness = self.best_solutions_fitness[solution_idx]
-                    elif (self.keep_elitism > 0) and (self.last_generation_elitism is not None) and (len(self.last_generation_elitism) > 0) and (list(sol) in last_generation_elitism_as_list):
+                    elif REUSE_FITNESS and (self.keep_elitism > 0) and (self.last_generation_elitism is not None) and (len(self.last_generation_elitism) > 0) and (list(sol) in last_generation_elitism_as_list):
                         # Return the index of the elitism from the elitism array 'self.last_generation_elitism'.
                         # This is not its index within the population. It is just its index in the 'self.last_generation_elitism' array.
                         elitism_idx = last_generation_elitism_as_list.index(list(sol))
@@ -1693,7 +1694,7 @@ class GA(utils.parent_selection.ParentSelection,
                     # If the solutions are not saved (i.e. `save_solutions=False`), check if this solution is a parent from the previous generation and its fitness value is already calculated. If so, use the fitness value instead of calling the fitness function.
                     # We cannot use the `numpy.where()` function directly because it does not support the `axis` parameter. This is why the `numpy.all()` function is used to match the solutions on axis=1.
                     # elif (self.last_generation_parents is not None) and len(numpy.where(numpy.all(self.last_generation_parents == sol, axis=1))[0] > 0):
-                    elif ((self.keep_parents == -1) or (self.keep_parents > 0)) and (self.last_generation_parents is not None) and (len(self.last_generation_parents) > 0) and (list(sol) in last_generation_parents_as_list):
+                    elif REUSE_FITNESS and ((self.keep_parents == -1) or (self.keep_parents > 0)) and (self.last_generation_parents is not None) and (len(self.last_generation_parents) > 0) and (list(sol) in last_generation_parents_as_list):
                         # Index of the parent in the 'self.last_generation_parents' array.
                         # This is not its index within the population. It is just its index in the 'self.last_generation_parents' array.
                         # parent_idx = numpy.where(numpy.all(self.last_generation_parents == sol, axis=1))[0][0]
@@ -1763,11 +1764,11 @@ class GA(utils.parent_selection.ParentSelection,
                     # The functions numpy.any()/numpy.all()/numpy.where()/numpy.equal() are very slow.
                     # So, list membership operator 'in' is used to check if the solution exists in the 'self.solutions' list.
                     # Make sure that both the solution and 'self.solutions' are of type 'list' not 'numpy.ndarray'.
-                    if (self.save_solutions) and (len(self.solutions) > 0) and (list(sol) in self.solutions):
+                    if  REUSE_FITNESS and (self.save_solutions) and (len(self.solutions) > 0) and (list(sol) in self.solutions):
                         solution_idx = self.solutions.index(list(sol))
                         fitness = self.solutions_fitness[solution_idx]
                         pop_fitness[sol_idx] = fitness
-                    elif (self.keep_elitism > 0) and (self.last_generation_elitism is not None) and (len(self.last_generation_elitism) > 0) and (list(sol) in last_generation_elitism_as_list):
+                    elif REUSE_FITNESS and (self.keep_elitism > 0) and (self.last_generation_elitism is not None) and (len(self.last_generation_elitism) > 0) and (list(sol) in last_generation_elitism_as_list):
                         # Return the index of the elitism from the elitism array 'self.last_generation_elitism'.
                         # This is not its index within the population. It is just its index in the 'self.last_generation_elitism' array.
                         elitism_idx = last_generation_elitism_as_list.index(
@@ -1781,7 +1782,7 @@ class GA(utils.parent_selection.ParentSelection,
                     # If the solutions are not saved (i.e. `save_solutions=False`), check if this solution is a parent from the previous generation and its fitness value is already calculated. If so, use the fitness value instead of calling the fitness function.
                     # We cannot use the `numpy.where()` function directly because it does not support the `axis` parameter. This is why the `numpy.all()` function is used to match the solutions on axis=1.
                     # elif (self.last_generation_parents is not None) and len(numpy.where(numpy.all(self.last_generation_parents == sol, axis=1))[0] > 0):
-                    elif ((self.keep_parents == -1) or (self.keep_parents > 0)) and (self.last_generation_parents is not None) and (len(self.last_generation_parents) > 0) and (list(sol) in last_generation_parents_as_list):
+                    elif REUSE_FITNESS and ((self.keep_parents == -1) or (self.keep_parents > 0)) and (self.last_generation_parents is not None) and (len(self.last_generation_parents) > 0) and (list(sol) in last_generation_parents_as_list):
                         # Index of the parent in the 'self.last_generation_parents' array.
                         # This is not its index within the population. It is just its index in the 'self.last_generation_parents' array.
                         # parent_idx = numpy.where(numpy.all(self.last_generation_parents == sol, axis=1))[0][0]

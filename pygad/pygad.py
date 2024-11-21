@@ -9,7 +9,7 @@ import logging
 from pygad import utils
 from pygad import helper
 from pygad import visualize
-from my_constants import REUSE_FITNESS
+from pygad.my_constants import REUSE_FITNESS
 
 # Extend all the classes so that they can be referenced by just the `self` object of the `pygad.GA` class.
 class GA(utils.parent_selection.ParentSelection,
